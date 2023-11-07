@@ -20,8 +20,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: ["", "i686"]
-        flavor: ["", "fortran"]
+        arch: ["i686"]
+        flavor: [""]
 
     steps:
       - uses: actions/checkout@v3
@@ -29,10 +29,6 @@ jobs:
       - name: Apply i686 patch
         if: matrix.arch == 'i686'
         run: patch -p1 -i src/variant-i686.patch
-
-      - name: Apply Fortran patch
-        if: matrix.flavor == 'fortran'
-        run: patch -p1 -i src/variant-fortran.patch
 
       - name: Generate ZIP name and version string
         id: filename
