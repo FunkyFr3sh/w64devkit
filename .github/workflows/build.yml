@@ -9,7 +9,7 @@ on:
       - '*'
 
 # Must set Settings -> Actions -> General -> Workflow permissions to
-# "Read and write permissions"
+# "Read and write permissions" 
 permissions:
   contents: write
 
