@@ -9,4 +9,4 @@
          --with-default-msvcrt=msvcrt-os \
 +        --with-default-win32-winnt=0x0501 \
   && make -j$(nproc) \
-@@ -99,2 +100,5 @@ RUN ln -s $ARCH mingw \
+@@ -99,2 +100,5 @@ RUN ln -s $ARCH mingw
