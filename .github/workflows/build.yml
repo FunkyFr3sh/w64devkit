@@ -26,6 +26,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Apply i686 patch
+        if: matrix.arch == 'i686'
+        run: patch -p1 -i src/variant-i686.patch
+
       - name: Generate ZIP name and version string
         id: filename
         env:
