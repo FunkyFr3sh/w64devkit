@@ -55,11 +55,3 @@ jobs:
         with:
           name: ${{ steps.filename.outputs.zipname }}
           path: w64devkit/*
-
-      - name: Create Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
-        with:
-          name: ${{ steps.filename.outputs.version }}
-          files: w64devkit-*.zip
-          draft: true
