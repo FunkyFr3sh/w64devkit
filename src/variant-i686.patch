@@ -10,6 +10,3 @@
 +        --with-default-win32-winnt=0x0501 \
   && make -j$(nproc) \
 @@ -99,2 +100,5 @@ RUN ln -s $ARCH mingw
- 
-+# Disable UTF-8 manifest for Windows XP (#58)
-+RUN echo >/gcc-$GCC_VERSION/gcc/config/i386/winnt-utf8.manifest
