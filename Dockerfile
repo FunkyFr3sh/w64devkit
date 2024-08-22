@@ -25,60 +25,11 @@ RUN apt-get update && apt-get install --yes --no-install-recommends \
 # Download, verify, and unpack
 
 RUN curl --insecure --location --remote-name-all --remote-header-name \
-    https://ftp.gnu.org/gnu/binutils/binutils-$BINUTILS_VERSION.tar.xz \
-    https://ftp.gnu.org/gnu/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.xz \
-    https://ftp.gnu.org/gnu/gdb/gdb-$GDB_VERSION.tar.xz \
-    https://fossies.org/linux/www/expat-$EXPAT_VERSION.tar.xz \
-    https://ftp.gnu.org/gnu/gmp/gmp-$GMP_VERSION.tar.xz \
-    https://ftp.gnu.org/gnu/mpc/mpc-$MPC_VERSION.tar.gz \
-    https://ftp.gnu.org/gnu/mpfr/mpfr-$MPFR_VERSION.tar.xz \
-    https://ftp.gnu.org/gnu/make/make-$MAKE_VERSION.tar.gz \
-    https://ftp.gnu.org/gnu/libiconv/libiconv-$LIBICONV_VERSION.tar.gz \
-    https://frippery.org/files/busybox/busybox-w32-$BUSYBOX_VERSION.tgz \
-    http://ftp.vim.org/pub/vim/unix/vim-$VIM_VERSION.tar.bz2 \
-    https://www.nasm.us/pub/nasm/releasebuilds/$NASM_VERSION/nasm-$NASM_VERSION.tar.xz \
-    https://github.com/universal-ctags/ctags/archive/refs/tags/v$CTAGS_VERSION.tar.gz \
-    https://downloads.sourceforge.net/project/mingw-w64/mingw-w64/mingw-w64-release/mingw-w64-v$MINGW_VERSION.tar.bz2 \
-    https://downloads.sourceforge.net/project/pdcurses/pdcurses/$PDCURSES_VERSION/PDCurses-$PDCURSES_VERSION.tar.gz \
-    https://github.com/danmar/cppcheck/archive/$CPPCHECK_VERSION.tar.gz
+    https://downloads.sourceforge.net/project/mingw-w64/mingw-w64/mingw-w64-release/mingw-w64-v$MINGW_VERSION.tar.bz2
 COPY src/SHA256SUMS $PREFIX/src/
-RUN sha256sum -c $PREFIX/src/SHA256SUMS \
- && tar xJf binutils-$BINUTILS_VERSION.tar.xz \
- && tar xzf busybox-w32-$BUSYBOX_VERSION.tgz \
- && tar xzf ctags-$CTAGS_VERSION.tar.gz \
- && tar xJf gcc-$GCC_VERSION.tar.xz \
- && tar xJf gdb-$GDB_VERSION.tar.xz \
- && tar xJf expat-$EXPAT_VERSION.tar.xz \
- && tar xzf libiconv-$LIBICONV_VERSION.tar.gz \
- && tar xJf gmp-$GMP_VERSION.tar.xz \
- && tar xzf mpc-$MPC_VERSION.tar.gz \
- && tar xJf mpfr-$MPFR_VERSION.tar.xz \
- && tar xzf make-$MAKE_VERSION.tar.gz \
- && tar xjf mingw-w64-v$MINGW_VERSION.tar.bz2 \
- && tar xzf PDCurses-$PDCURSES_VERSION.tar.gz \
- && tar xJf nasm-$NASM_VERSION.tar.xz \
- && tar xjf vim-$VIM_VERSION.tar.bz2 \
- && tar xzf cppcheck-$CPPCHECK_VERSION.tar.gz
-COPY src/w64devkit.c src/w64devkit.ico \
-     src/alias.c src/debugbreak.c src/pkg-config.c \
-     $PREFIX/src/
+RUN tar xjf mingw-w64-v$MINGW_VERSION.tar.bz2
 
 ARG ARCH=x86_64-w64-mingw32
-
-# Fixes i686 Windows XP regression
-# https://sourceforge.net/p/mingw-w64/bugs/821/
-RUN sed -i /OpenThreadToken/d /mingw-w64-v$MINGW_VERSION/mingw-w64-crt/lib32/kernel32.def
-
-WORKDIR /x-mingw-headers
-RUN /mingw-w64-v$MINGW_VERSION/mingw-w64-headers/configure \
-        --prefix=/bootstrap/$ARCH \
-        --host=$ARCH \
-        --with-default-msvcrt=msvcrt-os \
- && make -j$(nproc) \
- && make install
-
-WORKDIR /bootstrap
-RUN ln -s $ARCH mingw
 
 ENV PATH="/bootstrap/bin:${PATH}"
 
@@ -91,34 +42,8 @@ RUN /mingw-w64-v$MINGW_VERSION/mingw-w64-crt/configure \
         --disable-dependency-tracking \
         --disable-lib32 \
         --enable-lib64 \
-        CFLAGS="-Os" \
+        CFLAGS="-O2" \
         LDFLAGS="-s" \
- && make -j$(nproc) \
- && make install
-
-WORKDIR /x-winpthreads
-RUN /mingw-w64-v$MINGW_VERSION/mingw-w64-libraries/winpthreads/configure \
-        --prefix=/bootstrap/$ARCH \
-        --with-sysroot=/bootstrap/$ARCH \
-        --host=$ARCH \
-        --enable-static \
-        --disable-shared \
-        CFLAGS="-Os" \
-        LDFLAGS="-s" \
- && make -j$(nproc) \
- && make install
-
-WORKDIR /x-gcc
-RUN make -j$(nproc) \
- && make install
-
-# Cross-compile GCC
-
-WORKDIR /mingw-headers
-RUN /mingw-w64-v$MINGW_VERSION/mingw-w64-headers/configure \
-        --prefix=$PREFIX/$ARCH \
-        --host=$ARCH \
-        --with-default-msvcrt=msvcrt-os \
  && make -j$(nproc) \
  && make install
 
@@ -131,19 +56,7 @@ RUN /mingw-w64-v$MINGW_VERSION/mingw-w64-crt/configure \
         --disable-dependency-tracking \
         --disable-lib32 \
         --enable-lib64 \
-        CFLAGS="-Os" \
-        LDFLAGS="-s" \
- && make -j$(nproc) \
- && make install
-
-WORKDIR /winpthreads
-RUN /mingw-w64-v$MINGW_VERSION/mingw-w64-libraries/winpthreads/configure \
-        --prefix=$PREFIX/$ARCH \
-        --with-sysroot=$PREFIX/$ARCH \
-        --host=$ARCH \
-        --enable-static \
-        --disable-shared \
-        CFLAGS="-Os" \
+        CFLAGS="-O2" \
         LDFLAGS="-s" \
  && make -j$(nproc) \
  && make install
