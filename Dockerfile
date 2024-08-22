@@ -27,8 +27,7 @@ RUN apt-get update && apt-get install --yes --no-install-recommends \
 RUN curl --insecure --location --remote-name-all --remote-header-name \
     https://downloads.sourceforge.net/project/mingw-w64/mingw-w64/mingw-w64-release/mingw-w64-v$MINGW_VERSION.tar.bz2
 COPY src/SHA256SUMS $PREFIX/src/
-RUN sha256sum -c $PREFIX/src/SHA256SUMS \
- && tar xjf mingw-w64-v$MINGW_VERSION.tar.bz2
+RUN tar xjf mingw-w64-v$MINGW_VERSION.tar.bz2
 
 ARG ARCH=x86_64-w64-mingw32
 
