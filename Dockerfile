@@ -65,7 +65,7 @@ RUN sha256sum -c $PREFIX/src/SHA256SUMS \
  && tar xjf vim-$VIM_VERSION.tar.bz2
 COPY src/w64devkit.c src/w64devkit.ico src/libmemory.c src/libchkstk.S \
      src/alias.c src/debugbreak.c src/pkg-config.c src/vc++filt.c \
-     src/peports.c src/profile $PREFIX/src/
+     src/peports.c src/forcecrc32.c src/profile $PREFIX/src/
 
 ARG ARCH=i686-w64-mingw32
 
