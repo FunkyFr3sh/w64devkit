@@ -60,7 +60,7 @@ COPY src/w64devkit.c src/w64devkit.ico src/libmemory.c src/libchkstk.S \
      src/alias.c src/debugbreak.c src/pkg-config.c src/vc++filt.c \
      src/peports.c src/profile $PREFIX/src/
 
-ARG ARCH=x86_64-w64-mingw32
+ARG ARCH=i686-w64-mingw32
 
 # Build cross-compiler
 
@@ -88,6 +88,7 @@ RUN /mingw-w64-v$MINGW_VERSION/mingw-w64-headers/configure \
         --prefix=/bootstrap/$ARCH \
         --host=$ARCH \
         --with-default-msvcrt=msvcrt-os \
+        --with-default-win32-winnt=0x0501 \
  && make -j$(nproc) \
  && make install
 
@@ -100,6 +101,7 @@ RUN cat $PREFIX/src/gcc-*.patch | patch -d/gcc-$GCC_VERSION -p1 \
  && /gcc-$GCC_VERSION/configure \
         --prefix=/bootstrap \
         --with-sysroot=/bootstrap \
+        --with-arch=pentium4 \
         --target=$ARCH \
         --enable-static \
         --disable-shared \
@@ -136,8 +138,8 @@ RUN /mingw-w64-v$MINGW_VERSION/mingw-w64-crt/configure \
         --host=$ARCH \
         --with-default-msvcrt=msvcrt-os \
         --disable-dependency-tracking \
-        --disable-lib32 \
-        --enable-lib64 \
+        --enable-lib32 \
+        --disable-lib64 \
         CFLAGS="-Os" \
         LDFLAGS="-s" \
  && make -j$(nproc) \
@@ -221,6 +223,7 @@ RUN /mingw-w64-v$MINGW_VERSION/mingw-w64-headers/configure \
         --prefix=$PREFIX/$ARCH \
         --host=$ARCH \
         --with-default-msvcrt=msvcrt-os \
+        --with-default-win32-winnt=0x0501 \
  && make -j$(nproc) \
  && make install
 
@@ -231,8 +234,8 @@ RUN /mingw-w64-v$MINGW_VERSION/mingw-w64-crt/configure \
         --host=$ARCH \
         --with-default-msvcrt=msvcrt-os \
         --disable-dependency-tracking \
-        --disable-lib32 \
-        --enable-lib64 \
+        --enable-lib32 \
+        --disable-lib64 \
         CFLAGS="-Os" \
         LDFLAGS="-s" \
  && make -j$(nproc) \
@@ -255,6 +258,7 @@ RUN /gcc-$GCC_VERSION/configure \
         --prefix=$PREFIX \
         --with-sysroot=$PREFIX/$ARCH \
         --with-native-system-header-dir=/include \
+        --with-arch=pentium4 \
         --target=$ARCH \
         --host=$ARCH \
         --enable-static \
@@ -275,6 +279,7 @@ RUN /gcc-$GCC_VERSION/configure \
         --disable-multilib \
         --disable-nls \
         --disable-win32-registry \
+        --disable-win32-utf8-manifest \
         --enable-mingw-wildcard \
         CFLAGS_FOR_TARGET="-Os" \
         CXXFLAGS_FOR_TARGET="-Os" \
@@ -382,7 +387,7 @@ RUN /make-$MAKE_VERSION/configure \
 WORKDIR /busybox-w32
 COPY src/busybox-* $PREFIX/src/
 RUN cat $PREFIX/src/busybox-*.patch | patch -p1 \
- && make mingw64u_defconfig \
+ && make mingw64_defconfig \
  && sed -ri 's/^(CONFIG_AR)=y/\1=n/' .config \
  && sed -ri 's/^(CONFIG_ASCII)=y/\1=n/' .config \
  && sed -ri 's/^(CONFIG_DPKG\w*)=y/\1=n/' .config \
@@ -496,7 +501,6 @@ RUN printf "id ICON \"$PREFIX/src/w64devkit.ico\"" >w64devkit.rc \
         >>$PREFIX/COPYING.MinGW-w64-runtime.txt . \
  && cat /mingw-w64-v$MINGW_VERSION/mingw-w64-libraries/winpthreads/COPYING \
         >>$PREFIX/COPYING.MinGW-w64-runtime.txt \
- && echo $VERSION >$PREFIX/VERSION.txt \
- && 7z a -mx=9 -mtm=- $PREFIX.7z $PREFIX
+ && echo $VERSION >$PREFIX/VERSION.txt
 ENV PREFIX=${PREFIX}
-CMD cat /7z/7z.sfx $PREFIX.7z
+CMD zip -q9Xr - $PREFIX
