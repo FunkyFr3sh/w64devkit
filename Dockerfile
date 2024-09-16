@@ -21,7 +21,7 @@ ARG PDCURSES_VERSION=3.9
 ARG VIM_VERSION=9.0
 
 RUN apt-get update && apt-get install --yes --no-install-recommends \
-  build-essential curl libgmp-dev libmpc-dev libmpfr-dev m4 p7zip-full
+  build-essential curl libgmp-dev libmpc-dev libmpfr-dev m4 p7zip-full zip
 
 # Download, verify, and unpack
 
