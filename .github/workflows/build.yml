@@ -45,7 +45,7 @@ jobs:
           unzip ${{ steps.filename.outputs.zipname }}.zip
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.filename.outputs.zipname }}
           path: w64devkit/*
