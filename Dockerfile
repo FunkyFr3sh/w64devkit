@@ -236,7 +236,7 @@ RUN /mingw-w64-v$MINGW_VERSION/mingw-w64-crt/configure \
         --disable-dependency-tracking \
         --enable-lib32 \
         --disable-lib64 \
-        CFLAGS="-Os" \
+        CFLAGS="-Os -march=i486" \
         LDFLAGS="-s" \
  && make -j$(nproc) \
  && make install
