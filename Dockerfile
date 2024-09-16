@@ -358,19 +358,6 @@ RUN /libiconv-$LIBICONV_VERSION/configure \
  && make -j$(nproc) \
  && make install
 
-WORKDIR /gdb
-COPY src/gdb-*.patch $PREFIX/src/
-RUN cat $PREFIX/src/gdb-*.patch | patch -d/gdb-$GDB_VERSION -p1 \
- && sed -i 's/quiet = 0/quiet = 1/' /gdb-$GDB_VERSION/gdb/main.c \
- && /gdb-$GDB_VERSION/configure \
-        --host=$ARCH \
-        --enable-tui \
-        CFLAGS="-Os -D__MINGW_USE_VC2005_COMPAT -DPDC_WIDE -I/deps/include" \
-        CXXFLAGS="-Os -D__MINGW_USE_VC2005_COMPAT -DPDC_WIDE -I/deps/include" \
-        LDFLAGS="-s -L/deps/lib" \
- && make MAKEINFO=true -j$(nproc) \
- && cp gdb/.libs/gdb.exe gdbserver/gdbserver.exe $PREFIX/bin/
-
 WORKDIR /make
 RUN /make-$MAKE_VERSION/configure \
         --host=$ARCH \
@@ -424,35 +411,6 @@ RUN $ARCH-gcc -Os -fno-asynchronous-unwind-tables -Wl,--gc-sections -s \
       unlzma unlzop unxz unzip uptime usleep uudecode uuencode watch \
       wc wget which whoami whois xargs xz xzcat yes zcat \
     | xargs -I{} cp alias.exe $PREFIX/bin/{}.exe
-
-# TODO: Either somehow use $VIM_VERSION or normalize the workdir
-WORKDIR /vim90/src
-RUN ARCH= make -j$(nproc) -f Make_ming.mak \
-        OPTIMIZE=SIZE STATIC_STDCPLUS=yes HAS_GCC_EH=no \
-        UNDER_CYGWIN=yes CROSS=yes CROSS_COMPILE=$ARCH- \
-        FEATURES=HUGE VIMDLL=yes NETBEANS=no WINVER=0x0501 \
- && $ARCH-strip vimrun.exe \
- && rm -rf ../runtime/tutor/tutor.* \
- && cp -r ../runtime $PREFIX/share/vim \
- && cp vimrun.exe gvim.exe vim.exe *.dll $PREFIX/share/vim/ \
- && cp xxd/xxd.exe $PREFIX/bin \
- && printf '@set SHELL=\r\n@start "" "%%~dp0/../share/vim/gvim.exe" %%*\r\n' \
-        >$PREFIX/bin/gvim.bat \
- && printf '@set SHELL=\r\n@"%%~dp0/../share/vim/vim.exe" %%*\r\n' \
-        >$PREFIX/bin/vim.bat \
- && printf '@set SHELL=\r\n@"%%~dp0/../share/vim/vim.exe" %%*\r\n' \
-        >$PREFIX/bin/vi.bat \
- && printf '@vim -N -u NONE "+read %s" "+write" "%s"\r\n' \
-        '$VIMRUNTIME/tutor/tutor' '%TMP%/tutor%RANDOM%' \
-        >$PREFIX/bin/vimtutor.bat
-
-WORKDIR /ctags-$CTAGS_VERSION
-RUN sed -i /RT_MANIFEST/d win32/ctags.rc \
- && make -j$(nproc) -f mk_mingw.mak CC=gcc packcc.exe \
- && make -j$(nproc) -f mk_mingw.mak \
-        CC=$ARCH-gcc WINDRES=$ARCH-windres \
-        OPT= CFLAGS=-Os LDFLAGS=-s \
- && cp ctags.exe $PREFIX/bin/
 
 WORKDIR /7z
 COPY src/7z.mak $PREFIX/src/
