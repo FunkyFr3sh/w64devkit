@@ -40,10 +40,10 @@ jobs:
           docker run --rm w64devkit > ${{ steps.filename.outputs.zipname }}.zip
 
         # https://github.com/actions/upload-artifact#zipped-artifact-downloads
-      - name: Prepare artifact
+      - name: Prepare Release and artifact
         run: |
           unzip ${{ steps.filename.outputs.zipname }}.zip
-          7z a -t7z -m0=lzma2 -mx=9 -aoa ./w64devkit-mini-for-patching.7z ./w64devkit/*
+          7z a -t7z -m0=lzma2 -mx=9 -aoa ./w64devkit-mini-for-patching.7z ./w64devkit/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
