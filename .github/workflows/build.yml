@@ -43,6 +43,7 @@ jobs:
       - name: Prepare artifact
         run: |
           unzip ${{ steps.filename.outputs.zipname }}.zip
+          7z a -t7z -m0=lzma2 -mx=9 -aoa ./w64devkit-mini-for-patching.7z ./w64devkit/*
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -54,5 +55,5 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           name: ${{ steps.filename.outputs.version }}
-          files: w64devkit*.zip
+          files: w64devkit*.zip w64devkit*.7z
           draft: true
