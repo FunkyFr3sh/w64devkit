@@ -371,7 +371,7 @@ RUN /make-$MAKE_VERSION/configure \
  && make -j$(nproc) \
  && cp make.exe $PREFIX/bin/ \
  && $ARCH-gcc -DEXE=make.exe -DCMD=make \
-        -Os -fno-asynchronous-unwind-tables \
+        -O2 -fno-asynchronous-unwind-tables \
         -Wl,--gc-sections -s -nostdlib \
         -o $PREFIX/bin/mingw32-make.exe $PREFIX/src/alias.c -lkernel32
 
