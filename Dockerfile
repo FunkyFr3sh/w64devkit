@@ -366,7 +366,7 @@ WORKDIR /make
 RUN /make-$MAKE_VERSION/configure \
         --host=$ARCH \
         --disable-nls \
-        CFLAGS="-Os" \
+        CFLAGS="-O2" \
         LDFLAGS="-s" \
  && make -j$(nproc) \
  && cp make.exe $PREFIX/bin/ \
