@@ -11,7 +11,7 @@ ARG GCC_VERSION=14.2.0
 ARG GDB_VERSION=15.1
 ARG GMP_VERSION=6.3.0
 ARG LIBICONV_VERSION=1.17
-ARG MAKE_VERSION=4.4
+ARG MAKE_VERSION=4.4.1
 ARG MINGW_VERSION=12.0.0
 ARG MPC_VERSION=1.3.1
 ARG MPFR_VERSION=4.2.1
@@ -371,7 +371,7 @@ RUN /make-$MAKE_VERSION/configure \
  && make -j$(nproc) \
  && cp make.exe $PREFIX/bin/ \
  && $ARCH-gcc -DEXE=make.exe -DCMD=make \
-        -Os -fno-asynchronous-unwind-tables \
+        -O2 -fno-asynchronous-unwind-tables \
         -Wl,--gc-sections -s -nostdlib \
         -o $PREFIX/bin/mingw32-make.exe $PREFIX/src/alias.c -lkernel32
 
