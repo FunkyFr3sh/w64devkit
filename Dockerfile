@@ -22,7 +22,7 @@ ARG VIM_VERSION=9.0
 RUN apt-get update && apt-get install --yes --no-install-recommends \
   build-essential curl libgmp-dev libmpc-dev libmpfr-dev m4 p7zip-full zip git ca-certificates
 
-# Download, verify, and unpack
+# Download, verify, and unpack -
 
 RUN curl --insecure --location --remote-name-all --remote-header-name \
     https://downloads.sourceforge.net/project/sevenzip/7-Zip/23.01/7z$Z7_VERSION-src.tar.xz \
