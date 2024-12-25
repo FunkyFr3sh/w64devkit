@@ -285,11 +285,11 @@ RUN /gcc-$GCC_VERSION/configure \
         --disable-win32-registry \
         --disable-win32-utf8-manifest \
         --enable-mingw-wildcard \
-        CFLAGS_FOR_TARGET="-O3" \
-        CXXFLAGS_FOR_TARGET="-O3" \
+        CFLAGS_FOR_TARGET="-Os" \
+        CXXFLAGS_FOR_TARGET="-Os" \
         LDFLAGS_FOR_TARGET="-s" \
-        CFLAGS="-O3" \
-        CXXFLAGS="-O3" \
+        CFLAGS="-Os" \
+        CXXFLAGS="-Os" \
         LDFLAGS="-s" \
  && make -j$(nproc) \
  && make install \
